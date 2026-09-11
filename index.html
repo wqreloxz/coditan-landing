@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coditan</title>
+    <style>
+        :root {
+            --bg-color: #0d0e12;
+            --sidebar-bg: #16181d;
+            --border-color: #262930;
+            --text-color: #ffffff;
+            --text-muted: #9da3ae;
+            --card-bg: #16181d;
+            --primary-btn: #ffffff;
+            --primary-btn-text: #000000;
+            --modal-bg: #16181d;
+            --toggle-btn-bg: #262930;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --text-color: #111827;
+            --text-muted: #6b7280;
+            --card-bg: #ffffff;
+            --primary-btn: #111827;
+            --primary-btn-text: #ffffff;
+            --modal-bg: #ffffff;
+            --toggle-btn-bg: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 16px;
+            gap: 20px;
+            z-index: 20;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            margin-left: -260px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 8px;
+            margin-bottom: 10px;
+        }
+
+        .logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            position: relative;
+            background-color: var(--bg-color);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--bg-color);
+            z-index: 10;
+        }
+
+        .icon-btn {
+            background-color: var(--toggle-btn-bg);
+            border: none;
+            color: var(--text-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .lang-switch {
+            background-color: var(--toggle-btn-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Hero Content */
+        .page-content {
+            padding: 20px 40px 60px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-title-wrap {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 32px;
+            background-color: var(--text-color);
+            margin-left: 4px;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .hero-desc {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .btn-download {
+            padding: 12px 28px;
+            background-color: var(--primary-btn);
+            color: var(--primary-btn-text);
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+            margin-bottom: 40px;
+        }
+
+        .feature-block {
+            margin-bottom: 48px;
+        }
+
+        .section-num {
+            font-size: 13px;
+            color: #3b82f6;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .section-heading {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        /* Modal Screens */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background-color: var(--modal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 32px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: var(--toggle-btn-bg);
+            border: none;
+            color: var(--text-color);
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="IMG_0365.jpg" class="logo-img" alt="Logo">
+            <div class="logo-text">Coditan</div>
+        </div>
+
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="openPage('home')">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span data-i18n="nav-overview">Обзор</span>
+            </li>
+            <li class="nav-item" onclick="openPage('cloud-ai')">
+                <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+                <span data-i18n="nav-cloud">Cloud AI Guide</span>
+            </li>
+            <li class="nav-item" onclick="openPage('local-ai')">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                <span data-i18n="nav-local">Local AI Guide</span>
+            </li>
+            <li class="nav-item" onclick="openPage('quickstart')">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span data-i18n="nav-quickstart">Quickstart</span>
+            </li>
+            <li class="nav-item" onclick="openPage('settings')">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span data-i18n="nav-settings">Настройки</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Section -->
+    <div class="main-container">
+        
+        <!-- Controls Header -->
+        <div class="top-bar">
+            <button class="icon-btn" onclick="toggleSidebar()" title="Боковая панель">☰</button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">RU</button>
+                <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <div class="hero-title-wrap">
+                <span>Агент&nbsp;</span><span id="typewriter"></span><span class="typewriter-cursor"></span>
+            </div>
+
+            <p class="hero-desc" data-i18n="hero-desc">
+                Coditan — это ваш автономный ИИ-помощник в написании кода. Он объединяет облачные и локальные модели для решения задач любой сложности прямо на вашем компьютере.
+            </p>
+
+            <button class="btn-download" data-i18n="btn-download">Скачать Beta</button>
+
+            <div class="feature-block">
+                <div class="section-num">01</div>
+                <div class="section-heading" data-i18n="f1-title">Любой ИИ (Any AI)</div>
+                <p style="color: var(--text-muted);" data-i18n="f1-desc">Coditan не ограничивает вас конкретной моделью. Подключайте Anthropic Claude, OpenAI или локальные LLM через Ollama.</p>
+            </div>
+
+            <div class="feature-block">
+                <div class="section-num">02</div>
+                <div class="section-heading" data-i18n="f2-title">Оптимизация токенов</div>
+                <p style="color: var(--text-muted);" data-i18n="f2-desc">Эффективное сжатие контекста снижает расход API-токенов без потери точности результатов.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+
+        // Toggle Theme
+        let currentTheme = 'dark';
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', currentTheme);
+            document.getElementById('themeBtn').innerText = currentTheme === 'dark' ? '🌙' : '☀️';
+        }
+
+        // Language Translation System
+        const translations = {
+            ru: {
+                "nav-overview": "Обзор",
+                "nav-cloud": "Cloud AI Guide",
+                "nav-local": "Local AI Guide",
+                "nav-quickstart": "Quickstart",
+                "nav-settings": "Настройки",
+                "hero-desc": "Coditan — это ваш автономный ИИ-помощник в написании кода. Он объединяет облачные и локальные модели для решения задач любой сложности.",
+                "btn-download": "Скачать Beta",
+                "f1-title": "Любой ИИ (Any AI)",
+                "f1-desc": "Coditan не ограничивает вас конкретной моделью. Подключайте Anthropic Claude, OpenAI или локальные LLM.",
+                "f2-title": "Оптимизация токенов",
+                "f2-desc": "Эффективное сжатие контекста снижает расход API-токенов без потери точности."
+            },
+            en: {
+                "nav-overview": "Overview",
+                "nav-cloud": "Cloud AI Guide",
+                "nav-local": "Local AI Guide",
+                "nav-quickstart": "Quickstart",
+                "nav-settings": "Settings",
+                "hero-desc": "Coditan is an AI-powered coding buddy, seamlessly integrating Cloud and Local LLMs into your developer workflow.",
+                "btn-download": "Download Beta",
+                "f1-title": "Any AI",
+                "f1-desc": "Coditan isn't locked into specific models. Use Cloud or Local models on your own terms.",
+                "f2-title": "Token Efficient",
+                "f2-desc": "Optimized context windows keep API costs low while developing."
+            }
+        };
+
+        let currentLang = 'ru';
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+        }
+
+        // Typewriter Effect
+        const words = ["думает...", "создает...", "запускает...", "фиксит...", "проектирует..."];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typewriterEl = document.getElementById("typewriter");
+
+        function typeEffect() {
+            const currentWord = words[wordIndex];
+            
+            if (isDeleting) {
+                typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let speed = isDeleting ? 60 : 120;
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                speed = 1500; // Пауза после полного набора слова
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                speed = 400;
+            }
+
+            setTimeout(typeEffect, speed);
+        }
+
+        document.addEventListener("DOMContentLoaded", typeEffect);
+    </script>
+</body>
+</html>
